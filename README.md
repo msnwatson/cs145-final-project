@@ -37,11 +37,15 @@ The program then sends a "tracked packet" to the destination host, waits for the
 
 ### Router and Controller
 
-Use the templates located in this repository, taking care to fill in the areas marked by comments:
+The P4 Router defined in this directory at `p4src/tracertqueuing.p4` contains an implementation of a router which contains all of the necessary components to respond to "tracked packets" and uses ECMP-based routing decisions based on five-tuples.
 
-`// INSERT CUSTOM BEHAVIOR`
+You should use this p4 code as a template for which you can substitute in other routing policies; however, an important thing to note is that any router with which you want to use this program and functionality must implement the destination type (distinguishing connections between switch-facing and host-facing) as this is how the router determines if it is the final hop.
+
+Similarly, the controller code in this repository should also serve as a template which can be modified so long as the code which sets the default switch names and the destination types in the corresponding match tables in the router are maintained.
 
 ### Application
+The use of the application is as follows:
+
 ```
 $ mx <HOST_NAME> // to open shell in source host
 $ ./tracertqueuing.py <DST_HOST_IP_ADDRESS>
