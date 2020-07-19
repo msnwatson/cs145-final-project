@@ -61,6 +61,7 @@ control MyIngress(inout headers hdr,
         hdr.tracking.sw_name = sw_name;
     }
 
+    // match table containing switch names from the controller
     table sw_name {
         key = {
             hdr.ipv4.dstAddr: lpm;
@@ -106,7 +107,7 @@ control MyIngress(inout headers hdr,
     }
 
     apply {
-        if (standard_metadata.instance_type != 0) {
+        if (standard_metadata.instance_type != 0) { // sets all of the information in "metadata" packet
             hdr.tcp.setInvalid();
             hdr.udp.setValid();
             hdr.tracking.setValid();
@@ -128,11 +129,11 @@ control MyIngress(inout headers hdr,
             hdr.tracking.enq_qdepth = meta.enq_qdepth;
             hdr.tracking.deq_qdepth = meta.deq_qdepth;
             hdr.tracking.final_hop = meta.final_hop;
-            hdr.ipv4.protocol = 19;
+            hdr.ipv4.protocol = TYPE_TRACK_RESPONSE;
         }
 
         if (hdr.ipv4.isValid()) {
-            switch (ipv4_lpm.apply().action_run){
+            switch (ipv4_lpm.apply().action_run){ // ECMP based routing application
                 ecmp_group: {
                     switch(ecmp_group_to_nhop.apply().action_run) {
                         set_nhop: {
@@ -144,8 +145,8 @@ control MyIngress(inout headers hdr,
                     dst_type_table.apply();
                 }
             }
-            if (hdr.tracking.isValid() && meta.dst_type == 1) {
-                hdr.ipv4.protocol = 18;
+            if (hdr.tracking.isValid() && meta.dst_type == CONNEC_TYPE_HOST) {
+                hdr.ipv4.protocol = TYPE_TRACKED_UDP;
             }
         }
     }
@@ -159,15 +160,17 @@ control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {    
     apply {
+    	// all of the logic present here relates to the trace route functionality of
+	// the router and should not be removed
         if (meta.tracked_packet_flag == 1 && standard_metadata.instance_type == 0) {
             meta.enq_qdepth = standard_metadata.enq_qdepth;
             meta.deq_qdepth = standard_metadata.deq_qdepth;
 
-            if (meta.dst_type == 1) {
+            if (meta.dst_type == CONNEC_TYPE_HOST) {
                 meta.final_hop = 1;
             }
 
-            hdr.ipv4.protocol = 18;
+            hdr.ipv4.protocol = TYPE_TRACKED_UDP;
 
             clone3(CloneType.E2E, 100, meta);
         }
