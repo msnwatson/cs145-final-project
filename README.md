@@ -20,7 +20,7 @@ As a "tracked packet" moves forward through each hop, each router will send a pa
 
 This process is summarized in the following graphic for the first two hops.
 
-INSERT GRAPHIC HERE
+![](images/figure1.png)
 
 This design is somewhat complex but supports arbitrarily large networks as information about each hop is not embedded into the packet which is constrained by size.
 
