@@ -2,12 +2,12 @@
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
 
+#define PKT_INSTANCE_TYPE_NORMAL 0
 #define PKT_INSTANCE_TYPE_EGRESS_CLONE 2
 #define PKT_INSTANCE_TYPE_RECIRC 4
-#define PKT_INSTANCE_TYPE_NORMAL 0
 
-#define INTERNAL_ROUTER 1
-#define HOST_FACING_ROUTER 0
+#define CONNEC_TYPE_HOST 1
+#define CONNEC_TYPE_SWITCH 2
 
 const bit<16> TYPE_IPV4 = 0x800;
 const bit<8> TYPE_TCP = 0x06;
