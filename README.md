@@ -44,6 +44,9 @@ You should use this p4 code as a template for which you can substitute in other 
 Similarly, the controller code in this repository should also serve as a template which can be modified so long as the code which sets the default switch names and the destination types in the corresponding match tables in the router are maintained.
 
 ### Application
+
+Be sure to load the network topology and install the controller before trying to run this application.
+
 The use of the application is as follows:
 
 ```
